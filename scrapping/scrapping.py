@@ -56,14 +56,33 @@ def createCountryDictionary(table: Tag):
         "area_km2": area,
         "density": density
         })
-            
+
     return country_dictionary
     
     
 def saveFile(data):
     with open(FILE, "w", encoding="utf-8") as f:
         json.dump(data, f)
+        
+def loadExistingData():
+    if os.path.exists(FILE):
+        with open(FILE, "r", encoding="utf-8") as file:
+            try:
+                return json.load(file)
+            except:
+                return {}
+    return {}
 
-tables = extractUrbanAreasTable()
-data = createCountryDictionary(tables)
-saveFile(data)
+def main():
+    old_data = loadExistingData()
+    
+    tables = extractUrbanAreasTable()
+    new_data = createCountryDictionary(tables)
+    
+    if new_data != old_data:
+        print(new_data)
+        saveFile(new_data)
+    else:
+        print('No new data. file not modified')
+        
+main()
